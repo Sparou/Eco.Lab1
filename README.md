@@ -9,19 +9,19 @@
 
 ## Результаты тестировния
 
+Было проведено тестирование алгоритма с различными входными данными: случайные числа типа int, случайные числа типа float, случайные числа типа double. Размеры сортируемых массивов варьировались от 10.000 элементов до 1.000.000 элементов.
+
 ### Случайные числа типа integer
 
-![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/31da9280-1ed4-4042-9d46-29a0dbccc39b)
-
+![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/2e5dce93-79ad-415a-8fc8-147c2690019f)
 
 ### Случайные числа типа float
 
-![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/56a1d1de-85fa-4a4d-b9bd-267e94d2c4d2)
-
+![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/fb559b7d-e844-4318-8c66-3cf306f11b63)
 
 ### Случайные числа типа double
 
-![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/9cd47c93-ac10-47db-bdb7-284ae84dbfac)
+![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/c8254b6a-d575-4853-89ab-3d56f9932931)
 
 ## Выводы
 
