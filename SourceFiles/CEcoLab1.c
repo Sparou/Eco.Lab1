@@ -1,38 +1,9 @@
-﻿/*
- * <кодировка символов>
- *   Cyrillic (UTF-8 with signature) - Codepage 65001
- * </кодировка символов>
- *
- * <сводка>
- *   CEcoLab1
- * </сводка>
- *
- * <описание>
- *   Данный исходный код описывает реализацию интерфейсов CEcoLab1
- * </описание>
- *
- * <автор>
- *   Copyright (c) 2018 Vladimir Bashev. All rights reserved.
- * </автор>
- *
- */
-
-#include "IEcoSystem1.h"
+﻿#include "IEcoSystem1.h"
 #include "IEcoInterfaceBus1.h"
 #include "IEcoInterfaceBus1MemExt.h"
 #include "CEcoLab1.h"
 
-/*
- *
- * <сводка>
- *   Функция QueryInterface
- * </сводка>
- *
- * <описание>
- *   Функция QueryInterface для интерфейса IEcoLab1
- * </описание>
- *
- */
+// Функция QueryInterface для интерфейса IEcoLab1
 int16_t ECOCALLMETHOD CEcoLab1_QueryInterface(/* in */ struct IEcoLab1* me, /* in */ const UGUID* riid, /* out */ void** ppv) {
     CEcoLab1* pCMe = (CEcoLab1*)me;
 
@@ -57,17 +28,7 @@ int16_t ECOCALLMETHOD CEcoLab1_QueryInterface(/* in */ struct IEcoLab1* me, /* i
     return 0;
 }
 
-/*
- *
- * <сводка>
- *   Функция AddRef
- * </сводка>
- *
- * <описание>
- *   Функция AddRef для интерфейса IEcoLab1
- * </описание>
- *
- */
+// Функция AddRef для интерфейса IEcoLab1
 uint32_t ECOCALLMETHOD CEcoLab1_AddRef(/* in */ struct IEcoLab1* me) {
     CEcoLab1* pCMe = (CEcoLab1*)me;
 
@@ -79,17 +40,7 @@ uint32_t ECOCALLMETHOD CEcoLab1_AddRef(/* in */ struct IEcoLab1* me) {
     return ++pCMe->m_cRef;
 }
 
-/*
- *
- * <сводка>
- *   Функция Release
- * </сводка>
- *
- * <описание>
- *   Функция Release для интерфейса IEcoLab1
- * </описание>
- *
- */
+// Функция Release для интерфейса IEcoLab1
 uint32_t ECOCALLMETHOD CEcoLab1_Release(/* in */ struct IEcoLab1* me) {
     CEcoLab1* pCMe = (CEcoLab1*)me;
 
@@ -109,141 +60,207 @@ uint32_t ECOCALLMETHOD CEcoLab1_Release(/* in */ struct IEcoLab1* me) {
     return pCMe->m_cRef;
 }
 
-/*
- *
- * <сводка>
- *   Функция MyFunction
- * </сводка>
- *
- * <описание>
- *   Функция
- * </описание>
- *
- */
-
-
-void insertionSort(int16_t* arr, int16_t left, int16_t right) {
-	int16_t i = left + 1;
-	int16_t j = 0;
-	int temp = 0;
-
-	for (i; i <= right; i++) {
-		temp = arr[i];
-		j = i - 1;
-		while (j >= left && arr[j] > temp) {
-			arr[j+1] = arr[j];
-			j--;
-		}
-		arr[j+1] = temp;
-	}
+// Функция copyBytes, копирающая байты памяти из src в dst
+void copyBytes(char *src, char *dst, size_t count) {
+	char *end = src + count;
+    while (src < end) {
+        *(dst++) = *(src++);
+    }
 }
 
+// Функция swapBytes, меняющая местами байты из elem1 и elem2
+void swapBytes(char* elem1, char* elem2, size_t type_size) {
+    size_t i = 0;
+    char tmp;
+    for (; i < type_size; ++i) {
+        tmp = elem1[i];
+        elem1[i] = elem2[i];
+        elem2[i] = tmp;
+    }
+}
 
-void merge(struct IEcoLab1* me, int16_t* arr, int16_t left, int16_t mid, int16_t right) {
+int16_t getMinRun(size_t n) {
+    int16_t r = 0;
+    while (n >= 64) {
+        r |= n & 1;
+        n >>= 1;
+    }
+    return n + r;
+}
+
+// Один из компонентов timsort
+// Реализация сортировки вставками для интерфейса IEcoLab1
+int16_t insertionSortBytes(
+    struct IEcoLab1* me, 
+    char* start_ptr,
+    size_t arr_size,
+    size_t elem_size,
+    size_t left_border,
+    size_t right_border,
+    int (__cdecl *comp)(const void *, const void*)
+) {
+
+    size_t i;
+    size_t previous;
+    size_t j;
+
+	if (arr_size == 0) return;
+
+    for (i = left_border; i < right_border; i++) {
+        j = i + 1;
+        previous = i;
+        while (comp(start_ptr + previous * elem_size, start_ptr + j * elem_size) == 1 && previous >= 0 && j > left_border) {
+            swapBytes(start_ptr + previous * elem_size, start_ptr + j * elem_size, elem_size);
+            j--;
+            if (previous == 0) break;
+            previous--;
+        }
+    }
+
+    return 0;
+}
+
+// Один из компонентов timsort
+// Функция слияния для интерфейса IEcoLab1
+int16_t mergeBytes(
+    struct IEcoLab1* me, 
+    char* start_ptr, 
+    size_t arr_size, 
+    size_t elem_size, 
+    size_t left, 
+    size_t mid, 
+    size_t right,
+	int (__cdecl *comp)(const void *, const void*)
+) {
+
 	CEcoLab1* pCMe = (CEcoLab1*)me;
 
-	int16_t len1 = mid - left + 1;
-	int16_t len2 = right - mid;
+	size_t left_count = mid - left + 1;
+	size_t right_count = right - mid;
 
-	/* Выделить память */
-	int16_t* leftPart = (int16_t*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, len1);
-	int16_t* rightPart = (int16_t*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, len2);
+	char* leftPart = (char*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, left_count * elem_size);
+	char* rightPart = (char*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, right_count * elem_size);
 
-	int16_t i = 0;
-	int16_t j = 0;
-	int16_t k = left;
+	size_t i;
+	size_t j;
+	size_t k;
 
-	for (i; i < len1; i++) {
-		leftPart[i] = arr[left + i];
+	for (i = 0; i < left_count; i++) {
+        copyBytes(start_ptr + ((left + i) * elem_size), leftPart + i * elem_size, elem_size);
+	}
+
+	for (i = 0; i < right_count; i++) {
+        copyBytes(start_ptr + ((mid + 1 + i) * elem_size), rightPart + i * elem_size, elem_size);
 	}
 
 	i = 0;
-	for (i; i < len2; i++) {
-		rightPart[i] = arr[mid + 1 + i];
-	}
+    j = 0;
+    k = left;
 
-	i = 0;
-
-	while (i < len1 && j < len2) {
-		if (leftPart[i] <= rightPart[j]) {
-			arr[k] = leftPart[i];
+	while (i < left_count && j < right_count) {
+        int comp_result = comp(leftPart + i * elem_size, rightPart + j * elem_size);
+        if (comp_result <= 0) {
+            copyBytes(leftPart + i * elem_size, start_ptr + k * elem_size, elem_size);
 			i++;
 		}
 		else {
-			arr[k] = rightPart[j];
+            copyBytes(rightPart + j * elem_size, start_ptr + k * elem_size, elem_size);
 			j++;
 		}
 		k++;
 	}
 
-	while (i < len1) {
-		arr[k] = leftPart[i];
+	while (i < left_count) {
+        copyBytes(leftPart + i * elem_size, start_ptr + k * elem_size, elem_size);
 		k++;
 		i++;
 	}
 
-	while (j < len2) {
-		arr[k] = rightPart[j];
+	while (j < right_count) {
+        copyBytes(rightPart + j * elem_size, start_ptr + k * elem_size, elem_size);
 		k++;
 		j++;
 	}
 
+    return 0;
 }
 
-void timSort(struct IEcoLab1* me, int16_t* arr, int16_t n, int16_t run) {
+// Реализация сортировки timsort
+int16_t timSort(
+	struct IEcoLab1* me,
+    char* start_ptr,
+    size_t arr_size,
+    size_t elem_size,
+    size_t run,
+    int (__cdecl *comp)(const void *, const void*)
+) {
 
-	int16_t i = 0;
-	int16_t size = run;
-	int16_t left;
-	int16_t mid;
-	int16_t right;
+    size_t i;
+    size_t left;
+    size_t right;
+    size_t mid;
 
+    for (i = 0; i < arr_size; i += run) {
+        insertionSortBytes(
+            me,
+            start_ptr,
+            arr_size,
+            elem_size,
+            i,
+            min((i + run - 1), (arr_size - 1)),
+            comp
+        );
 
-	for (i; i < n; i += run) {
-		insertionSort(arr, i, min((i + run - 1), (n -1)));
-	}
+    }
 
-	for (size; size < n; size = 2 * size) {
-		for (left = 0; left < n; left += 2* size) {
-			mid = left + size - 1;
-			right = min((left + 2 * size - 1), (n-1));
+    for (i = run; i < arr_size; i = 2 * i) {
+        for (left = 0; left < arr_size; left += 2 * i) {
 
-			if (mid < right)
-				merge(me, arr, left, mid, right);
-		}
-	}
+            mid = left + i - 1;
+            right = min((left + 2 * i - 1), (arr_size - 1));
+
+            if (mid < right) {
+                mergeBytes(
+                    me,
+                    start_ptr,
+                    arr_size,
+                    elem_size,
+                    left,
+                    mid,
+                    right,
+                    comp
+                );
+            }
+        }
+    }
+	return 0;
 }
 
 
+// Функция qsort для интерфейса IEcoLab1
+int16_t ECOCALLMETHOD CEcoLab1_qsort(
+    struct IEcoLab1* me,
+    char* start_ptr,
+    size_t arr_size,
+    size_t elem_size, 
+    int (__cdecl *comp)(const void *, const void*)
+) {
 
-
-int16_t ECOCALLMETHOD CEcoLab1_qsort(/* in */ struct IEcoLab1* me, /* in */ int16_t* arr, int16_t size, int16_t run) {
     CEcoLab1* pCMe = (CEcoLab1*)me;
     int16_t index = 0;
 
-    /* Проверка указателей */
-    if (me == 0 ) {
+    if (me == 0 || start_ptr == 0 || comp == 0) 
+    {
+        printf("Pointer error!\n");
         return -1;
     }
 
-	timSort(me, arr, size, run);
+	timSort(me, start_ptr, arr_size, elem_size, getMinRun(arr_size), comp);
     return 0;
 }
 
 
-
-
-/*
- *
- * <сводка>
- *   Функция Init
- * </сводка>
- *
- * <описание>
- *   Функция инициализации экземпляра
- * </описание>
- *
- */
+// Функция Init для интерфейса IEcoLab1
 int16_t ECOCALLMETHOD initCEcoLab1(/*in*/ struct IEcoLab1* me, /* in */ struct IEcoUnknown *pIUnkSystem) {
     CEcoLab1* pCMe = (CEcoLab1*)me;
     IEcoInterfaceBus1* pIBus = 0;
@@ -285,19 +302,7 @@ IEcoLab1VTbl g_x277FC00C35624096AFCFC125B94EEC90VTbl = {
 };
 
 
-
-
-/*
- *
- * <сводка>
- *   Функция Create
- * </сводка>
- *
- * <описание>
- *   Функция создания экземпляра
- * </описание>
- *
- */
+// Функция Create для интерфейса IEcoLab1
 int16_t ECOCALLMETHOD createCEcoLab1(/* in */ IEcoUnknown* pIUnkSystem, /* in */ IEcoUnknown* pIUnkOuter, /* out */ IEcoLab1** ppIEcoLab1) {
     int16_t result = -1;
     IEcoSystem1* pISys = 0;
@@ -367,17 +372,7 @@ int16_t ECOCALLMETHOD createCEcoLab1(/* in */ IEcoUnknown* pIUnkSystem, /* in */
     return 0;
 }
 
-/*
- *
- * <сводка>
- *   Функция Delete
- * </сводка>
- *
- * <описание>
- *   Функция освобождения экземпляра
- * </описание>
- *
- */
+// Функция Delete для интерфейса IEcoLab1
 void ECOCALLMETHOD deleteCEcoLab1(/* in */ IEcoLab1* pIEcoLab1) {
     CEcoLab1* pCMe = (CEcoLab1*)pIEcoLab1;
     IEcoMemoryAllocator1* pIMem = 0;

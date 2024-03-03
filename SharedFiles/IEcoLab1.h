@@ -39,7 +39,7 @@ typedef struct IEcoLab1VTbl {
     uint32_t (ECOCALLMETHOD *Release)(/* in */ struct IEcoLab1* me);
 
     /* IEcoLab1 */
-    int16_t (ECOCALLMETHOD *qsort)(/* in */ struct IEcoLab1* me, /* in */ int16_t* arr, int16_t size, int16_t run);
+    int16_t (ECOCALLMETHOD *qsort)(struct IEcoLab1* me, char* start_ptr, size_t arr_size, size_t elem_size, int (__cdecl *comp)(const void *, const void*));
 
 } IEcoLab1VTbl, *IEcoLab1VTblPtr;
 
