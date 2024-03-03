@@ -62,7 +62,7 @@ uint32_t ECOCALLMETHOD CEcoLab1_Release(/* in */ struct IEcoLab1* me) {
 
 // Функция copyBytes, копирающая байты памяти из src в dst
 void copyBytes(char *src, char *dst, size_t count) {
-	char *end = src + count;
+    char *end = src + count;
     while (src < end) {
         *(dst++) = *(src++);
     }
@@ -104,7 +104,7 @@ int16_t insertionSortBytes(
     size_t previous;
     size_t j;
 
-	if (arr_size == 0) return;
+    if (arr_size == 0) return;
 
     for (i = left_border; i < right_border; i++) {
         j = i + 1;
@@ -130,64 +130,64 @@ int16_t mergeBytes(
     size_t left, 
     size_t mid, 
     size_t right,
-	int (__cdecl *comp)(const void *, const void*)
+    int (__cdecl *comp)(const void *, const void*)
 ) {
 
-	CEcoLab1* pCMe = (CEcoLab1*)me;
+    CEcoLab1* pCMe = (CEcoLab1*)me;
 
-	size_t left_count = mid - left + 1;
-	size_t right_count = right - mid;
+    size_t left_count = mid - left + 1;
+    size_t right_count = right - mid;
 
-	char* leftPart = (char*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, left_count * elem_size);
-	char* rightPart = (char*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, right_count * elem_size);
+    char* leftPart = (char*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, left_count * elem_size);
+    char* rightPart = (char*) pCMe->m_pIMem->pVTbl->Alloc(pCMe->m_pIMem, right_count * elem_size);
 
-	size_t i;
-	size_t j;
-	size_t k;
+    size_t i;
+    size_t j;
+    size_t k;
 
-	for (i = 0; i < left_count; i++) {
+    for (i = 0; i < left_count; i++) {
         copyBytes(start_ptr + ((left + i) * elem_size), leftPart + i * elem_size, elem_size);
-	}
+    }
 
-	for (i = 0; i < right_count; i++) {
+    for (i = 0; i < right_count; i++) {
         copyBytes(start_ptr + ((mid + 1 + i) * elem_size), rightPart + i * elem_size, elem_size);
-	}
+    }
 
-	i = 0;
+    i = 0;
     j = 0;
     k = left;
 
-	while (i < left_count && j < right_count) {
+    while (i < left_count && j < right_count) {
         int comp_result = comp(leftPart + i * elem_size, rightPart + j * elem_size);
         if (comp_result <= 0) {
             copyBytes(leftPart + i * elem_size, start_ptr + k * elem_size, elem_size);
-			i++;
-		}
-		else {
+            i++;
+        }
+        else {
             copyBytes(rightPart + j * elem_size, start_ptr + k * elem_size, elem_size);
-			j++;
-		}
-		k++;
-	}
+            j++;
+        }
+        k++;
+    }
 
-	while (i < left_count) {
+    while (i < left_count) {
         copyBytes(leftPart + i * elem_size, start_ptr + k * elem_size, elem_size);
-		k++;
-		i++;
-	}
+        k++;
+        i++;
+    }
 
-	while (j < right_count) {
+    while (j < right_count) {
         copyBytes(rightPart + j * elem_size, start_ptr + k * elem_size, elem_size);
-		k++;
-		j++;
-	}
+        k++;
+        j++;
+    }
 
     return 0;
 }
 
 // Реализация сортировки timsort
 int16_t timSort(
-	struct IEcoLab1* me,
+    struct IEcoLab1* me,
     char* start_ptr,
     size_t arr_size,
     size_t elem_size,
@@ -233,7 +233,7 @@ int16_t timSort(
             }
         }
     }
-	return 0;
+    return 0;
 }
 
 
@@ -255,7 +255,7 @@ int16_t ECOCALLMETHOD CEcoLab1_qsort(
         return -1;
     }
 
-	timSort(me, start_ptr, arr_size, elem_size, getMinRun(arr_size), comp);
+    timSort(me, start_ptr, arr_size, elem_size, getMinRun(arr_size), comp);
     return 0;
 }
 
@@ -289,7 +289,7 @@ int16_t ECOCALLMETHOD initCEcoLab1(/*in*/ struct IEcoLab1* me, /* in */ struct I
 
     /* Освобождение */
     pIBus->pVTbl->Release(pIBus);
-	
+    
     return result;
 }
 
@@ -311,7 +311,7 @@ int16_t ECOCALLMETHOD createCEcoLab1(/* in */ IEcoUnknown* pIUnkSystem, /* in */
     IEcoMemoryAllocator1* pIMem = 0;
     CEcoLab1* pCMe = 0;
     UGUID* rcid = (UGUID*)&CID_EcoMemoryManager1;
-	
+    
     /* Проверка указателей */
     if (ppIEcoLab1 == 0 || pIUnkSystem == 0) {
         return result;
@@ -328,7 +328,7 @@ int16_t ECOCALLMETHOD createCEcoLab1(/* in */ IEcoUnknown* pIUnkSystem, /* in */
     /* Получение интерфейса для работы с интерфейсной шиной */
     result = pISys->pVTbl->QueryInterface(pISys, &IID_IEcoInterfaceBus1, (void **)&pIBus);
 
-	/* Получение идентификатора компонента для работы с памятью */
+    /* Получение идентификатора компонента для работы с памятью */
     result = pIBus->pVTbl->QueryInterface(pIBus, &IID_IEcoInterfaceBus1MemExt, (void**)&pIMemExt);
     if (result == 0 && pIMemExt != 0) {
         rcid = (UGUID*)pIMemExt->pVTbl->get_Manager(pIMemExt);
