@@ -25,7 +25,7 @@
 
 ## Случайные значения типа char
 
-![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/0d1f1496-15fc-4d93-be52-63fd07cc0821)
+![image](https://github.com/Sparou/Eco.Lab1/assets/106825713/8e9a7a88-ebd7-4a0c-9747-d583c560e782)
 
 ## Случайные значения типа string
 
