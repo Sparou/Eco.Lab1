@@ -1,9 +1,9 @@
-﻿Build started 03.03.2024 13:38:40.
+﻿Build started 26.03.2024 17:14:23.
      1>Project "G:\Developings\Eco.Lab1\AssemblyFiles\Windows\VisualStudio_10\Eco.Lab1UnitTest.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Eco.Lab1UnitTest\DynamicDebug\Eco.Lab1UnitTest.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\..\..\SharedFiles /I..\..\..\HeaderFiles /IG:\Developings\Eco.Framework\Eco.Core1\SharedFiles /IG:\Developings\Eco.Framework\Eco.InterfaceBus1\SharedFiles /IG:\Developings\Eco.Framework\Eco.System1\SharedFiles /IG:\Developings\Eco.Framework\Eco.MemoryManager1\SharedFiles /IG:\Developings\Eco.Framework\Eco.FileSystemManagement1\SharedFiles /IG:\Developings\Eco.Framework\Eco.List1\SharedFiles /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D UGUID_UTILITY /D ECO_WINDOWS /D ECO_WIN32 /D ECO_DLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Eco.Lab1UnitTest\DynamicDebug\\" /Fd"Eco.Lab1UnitTest\DynamicDebug\vc100.pdb" /Gz /TC /analyze- /errorReport:prompt ..\..\..\UnitTestFiles\SourceFiles\EcoLab1.c
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\..\..\SharedFiles /I..\..\..\HeaderFiles /IG:\Developings\Eco.Framework\Eco.Core1\SharedFiles /IG:\Developings\Eco.Framework\Eco.InterfaceBus1\SharedFiles /IG:\Developings\Eco.Framework\Eco.System1\SharedFiles /IG:\Developings\Eco.Framework\Eco.MemoryManager1\SharedFiles /IG:\Developings\Eco.Framework\Eco.FileSystemManagement1\SharedFiles /IG:\Developings\Eco.Framework\Eco.List1\SharedFiles /IG:\Developings\Eco.Calculator\Eco.CalculatorA\SharedFiles /IG:\Developings\Eco.Calculator\Eco.CalculatorB\SharedFiles /IG:\Developings\Eco.Calculator\Eco.CalculatorD\SharedFiles /IG:\Developings\Eco.Calculator\Eco.CalculatorE\SharedFiles /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D UGUID_UTILITY /D ECO_WINDOWS /D ECO_WIN32 /D ECO_DLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Eco.Lab1UnitTest\DynamicDebug\\" /Fd"Eco.Lab1UnitTest\DynamicDebug\vc100.pdb" /Gz /TC /analyze- /errorReport:prompt ..\..\..\UnitTestFiles\SourceFiles\EcoLab1.c
          EcoLab1.c
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(990,5): warning MSB8012: TargetPath(G:\Developings\Eco.Lab1\AssemblyFiles\Windows\VisualStudio_10\Eco.Lab1UnitTest\DynamicDebug\Eco.Lab1UnitTest.exe) does not match the Linker's OutputFile property value (G:\Developings\Eco.Lab1\BuildFiles\Windows\x86\DynamicDebug\Eco.Lab1UnitTest.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
        Link:
@@ -37,4 +37,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.95
+Time Elapsed 00:00:00.90

@@ -5,6 +5,11 @@
 #include "IdEcoLab1.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "IdEcoCalculatorA.h"
+#include "IdEcoCalculatorB.h"
+#include "IdEcoCalculatorD.h"
+#include "IdEcoCalculatorE.h"
+
 
 // Компараторы
 int __cdecl compInts(const void* left, const void* right) {
@@ -175,8 +180,12 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     IEcoInterfaceBus1* pIBus = 0;       /* Указатель на интерфейс работы с системной интерфейсной шиной */
     IEcoMemoryAllocator1* pIMem = 0;    /* Указатель на интерфейс работы с памятью */
     IEcoLab1* pIEcoLab1 = 0;            /* Указатель на тестируемый интерфейс */
+    IEcoCalculatorX* pIEcoCalculatorX = 0;
+    IEcoCalculatorY* pIEcoCalculatorY = 0;
 
     int16_t result = 0;
+    int16_t a = 3;
+    int16_t b = 96;
 
     // Тестируемые массивы
     int* arr_int_for_timsort;
@@ -237,6 +246,12 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
         goto Release; /* Освобождение интерфейсов в случае ошибки */
     }
 
+    result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoCalculatorX, (void**)&pIEcoCalculatorX);
+    printf("Addition result: %d\n", pIEcoCalculatorX->pVTbl->Addition(pIEcoCalculatorX, a,b));
+
+    result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoCalculatorY, (void**)&pIEcoCalculatorY);
+    printf("Multiply result: %d\n", pIEcoCalculatorY->pVTbl->Multiplication(pIEcoCalculatorY, a,b));
+
     printf("Input array size -> ");
     scanf_s("%d", &arr_size);
 
@@ -253,12 +268,12 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     arr_char_for_qsort = createCopyArray(pIMem, arr_char_for_timsort, arr_size * sizeof(char));
     arr_string_for_qsort = createCopyArray(pIMem, arr_string_for_timsort, arr_size * sizeof(char*));
 
-    printf("Unsorted arrays\n");
-    printIntArray(arr_int_for_timsort, arr_size);
-    printFloatArray(arr_float_for_timsort, arr_size);
-    printDoubleArray(arr_double_for_timsort, arr_size);
-    printCharArray(arr_char_for_timsort, arr_size);
-    printStringArray(arr_string_for_timsort, arr_size);
+    //printf("Unsorted arrays\n");
+    //printIntArray(arr_int_for_timsort, arr_size);
+    //printFloatArray(arr_float_for_timsort, arr_size);
+    //printDoubleArray(arr_double_for_timsort, arr_size);
+    //printCharArray(arr_char_for_timsort, arr_size);
+    //printStringArray(arr_string_for_timsort, arr_size);
     
     before = clock();
     result = pIEcoLab1->pVTbl->qsort(pIEcoLab1, (char*)arr_int_for_timsort, arr_size, sizeof(int),compInts);
@@ -321,12 +336,12 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     printf("Qsort chars = %lf\n", qsort_time_char);
     printf("Qsort strings = %lf\n", qsort_time_string);
 
-    printf("Sorted arrays\n");
-    printIntArray(arr_int_for_timsort, arr_size);
-    printFloatArray(arr_float_for_timsort, arr_size);
-    printDoubleArray(arr_double_for_timsort, arr_size);
-    printCharArray(arr_char_for_timsort, arr_size);
-    printStringArray(arr_string_for_timsort, arr_size);
+    //printf("Sorted arrays\n");
+    //printIntArray(arr_int_for_timsort, arr_size);
+    //printFloatArray(arr_float_for_timsort, arr_size);
+    //printDoubleArray(arr_double_for_timsort, arr_size);
+    //printCharArray(arr_char_for_timsort, arr_size);
+    //printStringArray(arr_string_for_timsort, arr_size);
 
     pIMem->pVTbl->Free(pIMem, arr_int_for_timsort);
     pIMem->pVTbl->Free(pIMem, arr_float_for_timsort);
