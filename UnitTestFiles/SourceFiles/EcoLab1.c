@@ -184,8 +184,8 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     IEcoCalculatorY* pIEcoCalculatorY = 0;
 
     int16_t result = 0;
-    int16_t a = 3;
-    int16_t b = 96;
+    int16_t a = 1;
+    int16_t b = 1;
 
     // Тестируемые массивы
     int* arr_int_for_timsort;
@@ -246,16 +246,27 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
         goto Release; /* Освобождение интерфейсов в случае ошибки */
     }
 
-    result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoCalculatorX, (void**)&pIEcoCalculatorX);
-    printf("Addition result: %d\n", pIEcoCalculatorX->pVTbl->Addition(pIEcoCalculatorX, a,b));
+    printf("Input a & b values -> ");
+    scanf_s("%d%d", &a, &b);
 
-    //result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoCalculatorY, (void**)&pIEcoCalculatorY);
+    // Демонстрация включения компонента X;
+    result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoCalculatorX, (void**)&pIEcoCalculatorX);
+    if (pIEcoCalculatorX != 0) {
+        printf("Interface X has been successfully connected!\nAddition result: %d\n", pIEcoCalculatorX->pVTbl->Addition(pIEcoCalculatorX, a,b));
+    } else {
+        printf("Interface X has not been connected!\n");
+    }
+
+    // Деомнстрация включения компонента Y, который мы получаем через компонент X
     result = pIEcoCalculatorX->pVTbl->QueryInterface(pIEcoCalculatorX, &IID_IEcoCalculatorY, (void**)&pIEcoCalculatorY);
-    printf("Multiply result: %d\n", pIEcoCalculatorY->pVTbl->Multiplication(pIEcoCalculatorY, a,b));
+        if (pIEcoCalculatorX != 0) {
+        printf("Interface Y has been successfully connected!\nMultiply result: %d\n", pIEcoCalculatorY->pVTbl->Multiplication(pIEcoCalculatorY, a,b));
+    } else {
+        printf("Interface Y has not been connected!\n");
+    }
 
     printf("Input array size -> ");
     scanf_s("%d", &arr_size);
-
 
     arr_int_for_timsort = createIntArray(pIMem, arr_size);
     arr_float_for_timsort = createFloatArray(pIMem, arr_size);
@@ -355,6 +366,7 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     pIMem->pVTbl->Free(pIMem, arr_char_for_qsort);
     pIMem->pVTbl->Free(pIMem, arr_string_for_qsort);
 
+    scanf_s("%d%d", &a, &b);
 
 Release:
 
@@ -372,6 +384,9 @@ Release:
     if (pIEcoLab1 != 0) {
         pIEcoLab1->pVTbl->Release(pIEcoLab1);
     }
+
+    if (pIEcoCalculatorX != 0) pIEcoCalculatorX->pVTbl->Release(pIEcoCalculatorX);
+    if (pIEcoCalculatorY != 0) pIEcoCalculatorY->pVTbl->Release(pIEcoCalculatorY);
 
     /* Освобождение системного интерфейса */
     if (pISys != 0) {
