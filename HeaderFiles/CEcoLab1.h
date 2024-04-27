@@ -1,30 +1,17 @@
-﻿/*
- * <кодировка символов>
- *   Cyrillic (UTF-8 with signature) - Codepage 65001
- * </кодировка символов>
- *
- * <сводка>
- *   CEcoLab1
- * </сводка>
- *
- * <описание>
- *   Данный заголовок описывает реализацию компонента CEcoLab1
- * </описание>
- *
- * <автор>
- *   Copyright (c) 2018 Vladimir Bashev. All rights reserved.
- * </автор>
- *
- */
-
-#ifndef __C_ECOLAB1_H__
+﻿#ifndef __C_ECOLAB1_H__
 #define __C_ECOLAB1_H__
 
 #include "IEcoLab1.h"
 #include "IEcoSystem1.h"
 #include "IdEcoMemoryManager1.h"
+/* Connection & Agregation */
 #include "IEcoCalculatorX.h"
 #include "IEcoCalculatorY.h"
+/* Callbacks */
+#include "IEcoLab1Events.h"
+#include "IEcoEnumConnections.h"
+#include "IEcoConnectionPointContainer.h"
+#include "CEcoLab1ConnectionPoint.h"
 
 typedef struct CEcoLab1 {
 
@@ -37,6 +24,9 @@ typedef struct CEcoLab1 {
     /* Таблица функций интерфейса IEcoCalculatorY */
     IEcoCalculatorYVTbl* m_pVTblIEcoCalculatorY;
 
+    /* Таблица функций интерфейса IEcoConnectionPointContainer */
+    IEcoConnectionPointContainerVTbl* m_pVTblICPC;
+
     /* Счетчик ссылок */
     uint32_t m_cRef;
 
@@ -45,6 +35,9 @@ typedef struct CEcoLab1 {
 
     /* Системный интерфейс */
     IEcoSystem1* m_pISys;
+
+    /* Точка подключения */
+    CEcoLab1ConnectionPoint* m_pISinkCP;
 
     /* Указатель на интерфейс IEcoCalculatorX включаемого компонента */
     IEcoCalculatorX* m_pIEcoCalculatorX;

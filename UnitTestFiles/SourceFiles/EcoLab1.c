@@ -10,6 +10,12 @@
 #include "IdEcoCalculatorD.h"
 #include "IdEcoCalculatorE.h"
 
+#include "IEcoLab1Events.h"
+#include "IdEcoLab1.h"
+#include "IdEcoList1.h"
+#include "CEcoLab1Sink.h"
+#include "IEcoConnectionPointContainer.h"
+
 
 // Компараторы
 int __cdecl compInts(const void* left, const void* right) {
@@ -183,37 +189,44 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     IEcoCalculatorX* pIEcoCalculatorX = 0;
     IEcoCalculatorY* pIEcoCalculatorY = 0;
 
+
+    IEcoConnectionPointContainer* pICPC = 0;    /* Указатель на интерфейс контейнера точек подключения */
+    IEcoConnectionPoint* pICP = 0;              /* Указатель на интерфейс точки подключения */
+    IEcoLab1Events* pIEcoLab1Sink = 0;          /* Указатель на обратный интерфейс */
+    IEcoUnknown* pISinkUnk = 0;
+    uint32_t cAdvise = 0;
+
     int16_t result = 0;
     int16_t a = 1;
     int16_t b = 1;
 
     // Тестируемые массивы
     int* arr_int_for_timsort;
-    int* arr_int_for_qsort;
-    float* arr_float_for_timsort;
-    float* arr_float_for_qsort;
-    double* arr_double_for_timsort;
-    double* arr_double_for_qsort;
-    char* arr_char_for_timsort;
-    char* arr_char_for_qsort;
-    char** arr_string_for_timsort;
-    char** arr_string_for_qsort;
+    //int* arr_int_for_qsort;
+    //float* arr_float_for_timsort;
+    //float* arr_float_for_qsort;
+    //double* arr_double_for_timsort;
+    //double* arr_double_for_qsort;
+    //char* arr_char_for_timsort;
+    //char* arr_char_for_qsort;
+    //char** arr_string_for_timsort;
+    //char** arr_string_for_qsort;
 
     // Таймер
     clock_t before;
     clock_t after;
     
     // Счетчики времени
-    double tim_sort_time_int;
-    double qsort_time_int;
-    double tim_sort_time_float;
-    double qsort_time_float;
-    double tim_sort_time_double;
-    double qsort_time_double;
-    double tim_sort_time_char;
-    double qsort_time_char;
-    double tim_sort_time_strings;
-    double qsort_time_string;
+    //double tim_sort_time_int;
+    //double qsort_time_int;
+    //double tim_sort_time_float;
+    //double qsort_time_float;
+    //double tim_sort_time_double;
+    //double qsort_time_double;
+    //double tim_sort_time_char;
+    //double qsort_time_char;
+    //double tim_sort_time_strings;
+    //double qsort_time_string;
 
     size_t i = 0;
     size_t arr_size = 0;
@@ -246,6 +259,41 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
         goto Release; /* Освобождение интерфейсов в случае ошибки */
     }
 
+    /* Проверка поддержки подключений обратного интерфейса */
+    result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoConnectionPointContainer, (void **)&pICPC);
+    if (result != 0 || pICPC == 0) {
+        /* Освобождение интерфейсов в случае ошибки */
+        goto Release;
+    }
+
+    /* Запрос на получения интерфейса точки подключения */
+    result = pICPC->pVTbl->FindConnectionPoint(pICPC, &IID_IEcoLab1Events, &pICP);
+    if (result != 0 || pICP == 0) {
+        /* Освобождение интерфейсов в случае ошибки */
+        goto Release;
+    }
+    /* Освобождение интерфейса */
+    pICPC->pVTbl->Release(pICPC);
+
+    /* Создание экземпляра обратного интерфейса */
+    result = createCEcoLab1Sink(pIMem, (IEcoLab1Events**)&pIEcoLab1Sink);
+
+    if (pIEcoLab1Sink != 0) {
+        result = pIEcoLab1Sink->pVTbl->QueryInterface(pIEcoLab1Sink, &IID_IEcoUnknown,(void **)&pISinkUnk);
+        if (result != 0 || pISinkUnk == 0) {
+            /* Освобождение интерфейсов в случае ошибки */
+            goto Release;
+        }
+        /* Подключение */
+        result = pICP->pVTbl->Advise(pICP, pISinkUnk, &cAdvise);
+        /* Проверка */
+        if (result == 0 && cAdvise == 1) {
+            /* Сюда можно добавить код */
+        }
+        /* Освобождение интерфейса */
+        pISinkUnk->pVTbl->Release(pISinkUnk);
+    }
+
     printf("Input a & b values -> ");
     scanf_s("%d%d", &a, &b);
 
@@ -269,16 +317,16 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     scanf_s("%d", &arr_size);
 
     arr_int_for_timsort = createIntArray(pIMem, arr_size);
-    arr_float_for_timsort = createFloatArray(pIMem, arr_size);
-    arr_double_for_timsort = createDoubleArray(pIMem, arr_size);
-    arr_char_for_timsort = createCharArray(pIMem, arr_size);
-    arr_string_for_timsort = createStringArray(pIMem, arr_size);
+    //arr_float_for_timsort = createFloatArray(pIMem, arr_size);
+    //arr_double_for_timsort = createDoubleArray(pIMem, arr_size);
+    //arr_char_for_timsort = createCharArray(pIMem, arr_size);
+    //arr_string_for_timsort = createStringArray(pIMem, arr_size);
 
-    arr_int_for_qsort = createCopyArray(pIMem, arr_int_for_timsort, arr_size * sizeof(int));
-    arr_float_for_qsort = createCopyArray(pIMem, arr_float_for_timsort, arr_size * sizeof(float));
-    arr_double_for_qsort = createCopyArray(pIMem, arr_double_for_timsort, arr_size * sizeof(double));
-    arr_char_for_qsort = createCopyArray(pIMem, arr_char_for_timsort, arr_size * sizeof(char));
-    arr_string_for_qsort = createCopyArray(pIMem, arr_string_for_timsort, arr_size * sizeof(char*));
+    //arr_int_for_qsort = createCopyArray(pIMem, arr_int_for_timsort, arr_size * sizeof(int));
+    //arr_float_for_qsort = createCopyArray(pIMem, arr_float_for_timsort, arr_size * sizeof(float));
+    //arr_double_for_qsort = createCopyArray(pIMem, arr_double_for_timsort, arr_size * sizeof(double));
+    //arr_char_for_qsort = createCopyArray(pIMem, arr_char_for_timsort, arr_size * sizeof(char));
+    //arr_string_for_qsort = createCopyArray(pIMem, arr_string_for_timsort, arr_size * sizeof(char*));
 
     //printf("Unsorted arrays\n");
     //printIntArray(arr_int_for_timsort, arr_size);
@@ -290,9 +338,9 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     before = clock();
     result = pIEcoLab1->pVTbl->qsort(pIEcoLab1, (char*)arr_int_for_timsort, arr_size, sizeof(int),compInts);
     after = clock();
-    tim_sort_time_int = (double)(after - before); 
+   /* tim_sort_time_int = (double)(after - before); */
 
-    before = clock();
+ /*   before = clock();
     result = pIEcoLab1->pVTbl->qsort(pIEcoLab1, (char*)arr_float_for_timsort, arr_size, sizeof(float), compFloats);
     after = clock();
     tim_sort_time_float = (double)(after - before); 
@@ -346,27 +394,34 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
     printf("Qsort floats = %lf\n", qsort_time_float);
     printf("Qsort doubles = %lf\n", qsort_time_double);
     printf("Qsort chars = %lf\n", qsort_time_char);
-    printf("Qsort strings = %lf\n", qsort_time_string);
+    printf("Qsort strings = %lf\n", qsort_time_string);*/
 
     printf("Sorted arrays\n");
     printIntArray(arr_int_for_timsort, arr_size);
-    printFloatArray(arr_float_for_timsort, arr_size);
-    printDoubleArray(arr_double_for_timsort, arr_size);
-    printCharArray(arr_char_for_timsort, arr_size);
-    printStringArray(arr_string_for_timsort, arr_size);
+    //printFloatArray(arr_float_for_timsort, arr_size);
+    //printDoubleArray(arr_double_for_timsort, arr_size);
+    //printCharArray(arr_char_for_timsort, arr_size);
+    //printStringArray(arr_string_for_timsort, arr_size);
 
     pIMem->pVTbl->Free(pIMem, arr_int_for_timsort);
-    pIMem->pVTbl->Free(pIMem, arr_float_for_timsort);
-    pIMem->pVTbl->Free(pIMem, arr_double_for_timsort);
-    pIMem->pVTbl->Free(pIMem, arr_char_for_timsort);
-    pIMem->pVTbl->Free(pIMem, arr_string_for_timsort);
-    pIMem->pVTbl->Free(pIMem, arr_int_for_qsort);
-    pIMem->pVTbl->Free(pIMem, arr_float_for_qsort);
-    pIMem->pVTbl->Free(pIMem, arr_double_for_qsort);
-    pIMem->pVTbl->Free(pIMem, arr_char_for_qsort);
-    pIMem->pVTbl->Free(pIMem, arr_string_for_qsort);
+    //pIMem->pVTbl->Free(pIMem, arr_float_for_timsort);
+    //pIMem->pVTbl->Free(pIMem, arr_double_for_timsort);
+    //pIMem->pVTbl->Free(pIMem, arr_char_for_timsort);
+    //pIMem->pVTbl->Free(pIMem, arr_string_for_timsort);
+    //pIMem->pVTbl->Free(pIMem, arr_int_for_qsort);
+    //pIMem->pVTbl->Free(pIMem, arr_float_for_qsort);
+    //pIMem->pVTbl->Free(pIMem, arr_double_for_qsort);
+    //pIMem->pVTbl->Free(pIMem, arr_char_for_qsort);
+    //pIMem->pVTbl->Free(pIMem, arr_string_for_qsort);
 
     scanf_s("%d%d", &a, &b);
+
+    if (pIEcoLab1Sink != 0) {
+        /* Отключение */
+        result = pICP->pVTbl->Unadvise(pICP, cAdvise);
+        pIEcoLab1Sink->pVTbl->Release(pIEcoLab1Sink);
+        pICP->pVTbl->Release(pICP);
+    }
 
 Release:
 
