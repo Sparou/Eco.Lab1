@@ -18,6 +18,11 @@ typedef struct IEcoLab1VTblEvents {
 
     /* IEcoLab1Events */
     int16_t (ECOCALLMETHOD *OnInsertionSortCalled)(struct IEcoLab1Events* me, const void *startPtr, size_t elem_count);
+    int16_t (ECOCALLMETHOD *OnInsertionSortEnded)(struct IEcoLab1Events* me, const void *startPtr, size_t elem_count);
+    int16_t (ECOCALLMETHOD *OnInsertionSortIteration)(struct IEcoLab1Events* me, const void *startPtr, size_t elem_count, int leftIdx, int rightIdx);
+    int16_t (ECOCALLMETHOD *OnMergeSortCalled)(struct IEcoLab1Events* me, const void *startPtr, size_t elem_count);
+    int16_t (ECOCALLMETHOD *OnMergeSortEnded)(struct IEcoLab1Events* me, const void *startPtr, size_t elem_count);
+    int16_t (ECOCALLMETHOD *OnMinRunCalculated)(struct IEcoLab1Events* me, int minRun);
 
 } IEcoLab1VTblEvents, *IEcoLab1VTblEventsPtr;
 

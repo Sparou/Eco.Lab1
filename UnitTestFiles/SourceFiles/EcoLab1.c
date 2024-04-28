@@ -294,24 +294,24 @@ int16_t EcoMain(IEcoUnknown* pIUnk) {
         pISinkUnk->pVTbl->Release(pISinkUnk);
     }
 
-    printf("Input a & b values -> ");
-    scanf_s("%d%d", &a, &b);
+    //printf("Input a & b values -> ");
+    //scanf_s("%d%d", &a, &b);
 
     // Демонстрация включения компонента X;
     result = pIEcoLab1->pVTbl->QueryInterface(pIEcoLab1, &IID_IEcoCalculatorX, (void**)&pIEcoCalculatorX);
-    if (pIEcoCalculatorX != 0) {
-        printf("Interface X has been successfully connected!\nAddition result: %d\n", pIEcoCalculatorX->pVTbl->Addition(pIEcoCalculatorX, a,b));
-    } else {
-        printf("Interface X has not been connected!\n");
-    }
+    //if (pIEcoCalculatorX != 0) {
+    //    printf("Interface X has been successfully connected!\nAddition result: %d\n", pIEcoCalculatorX->pVTbl->Addition(pIEcoCalculatorX, a,b));
+    //} else {
+    //    printf("Interface X has not been connected!\n");
+    //}
 
     // Деомнстрация включения компонента Y, который мы получаем через компонент X
     result = pIEcoCalculatorX->pVTbl->QueryInterface(pIEcoCalculatorX, &IID_IEcoCalculatorY, (void**)&pIEcoCalculatorY);
-        if (pIEcoCalculatorX != 0) {
-        printf("Interface Y has been successfully connected!\nMultiply result: %d\n", pIEcoCalculatorY->pVTbl->Multiplication(pIEcoCalculatorY, a,b));
-    } else {
-        printf("Interface Y has not been connected!\n");
-    }
+    //    if (pIEcoCalculatorX != 0) {
+    //    printf("Interface Y has been successfully connected!\nMultiply result: %d\n", pIEcoCalculatorY->pVTbl->Multiplication(pIEcoCalculatorY, a,b));
+    //} else {
+    //    printf("Interface Y has not been connected!\n");
+    //}
 
     printf("Input array size -> ");
     scanf_s("%d", &arr_size);
